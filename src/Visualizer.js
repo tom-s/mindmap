@@ -24,6 +24,7 @@ class Visualizer extends Component {
       .graphData(this.props.data)
       .nodeId('id')
       .onNodeClick(node => {
+        console.log("node click", node)
         // Center/zoom on node
         this.myGraph.centerAt(node.x, node.y, 1000)
         this.myGraph.zoom(8, 2000)
@@ -31,7 +32,7 @@ class Visualizer extends Component {
       .nodeCanvasObject((node, ctx, globalScale) => {
         const label = node.name
         const fontSize = 12/globalScale
-        ctx.font = `${fontSize * 1 + node.size / 2}px Arial`
+        ctx.font = `${fontSize * node.size}px Arial`
         const textWidth = ctx.measureText(label).width
         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2) // some padding
         ctx.fillStyle = 'white'

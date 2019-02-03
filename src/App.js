@@ -89,20 +89,24 @@ class Visualizer extends Component {
       this.initGraph()
     }
   }
-  initGraph() {
-    if(!this.myGraph) {
-      this.myGraph = ForceGraph()(this.graph.current)
+  updateGraph() {
+    this.myGraph
       //.width(800)
       //.height(800)
       .graphData(this.props.data)
-      //.nodeId('id')
-      //.nodeAutoColorBy('group')
-      //.onNodeClick(node => {
+  }
+  initGraph() {
+    this.myGraph = ForceGraph()(this.graph.current)
+      .width(800)
+      .height(800)
+      .graphData(this.props.data)
+      .nodeId('id')
+      .nodeAutoColorBy('group')
+      .onNodeClick(node => {
         // Center/zoom on node
-        //this.myGraph.centerAt(node.x, node.y, 1000)
-        //this.myGraph.zoom(8, 2000)
-      //})
-      /*
+        this.myGraph.centerAt(node.x, node.y, 1000)
+        this.myGraph.zoom(8, 2000)
+      })
       .nodeCanvasObject((node, ctx, globalScale) => {
         const label = node.name
         const fontSize = 12/globalScale
@@ -115,15 +119,7 @@ class Visualizer extends Component {
         ctx.textBaseline = 'middle'
         ctx.fillStyle = node.color || 'white'
         ctx.fillText(label, node.x, node.y)
-      })*/
-    } else {
-      console.log("debug .graphData", this.myGraph.graphData())
-      // Just update data
-      this.myGraph
-      //.width(800)
-      //.height(800)
-      .graphData(this.props.data)
-    }
+      })
   }
   render() {
     return (

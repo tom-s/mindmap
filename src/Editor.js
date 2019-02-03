@@ -16,6 +16,7 @@ class Editor extends Component {
         indentWithTabs: true
       }
     )
+    this.editor.setSize("100%", "100%")
     this.editor.on('change', (cm) => {
       this.props.onChange(cm.getValue())
     })
@@ -24,7 +25,7 @@ class Editor extends Component {
   render() {
     const { value } = this.state
     return (
-    <div style={{height: 330, width: '100%'}}>
+    <div style={{ position: "absolute", width: "100%", height: "100%" }}>
       <textarea
         ref={this.textarea}
         value={value}/>

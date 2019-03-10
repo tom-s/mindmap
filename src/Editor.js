@@ -5,7 +5,26 @@ class Editor extends Component {
   textarea = createRef()
   editor = undefined
   state = {
-    value: `<b>Champ lexical des animaux</b>\n\t<div><img width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" id="external-flamingo" crossorigin="anonymous"/>flamant rose</div>\n\t<div><img width="100px" height="80px" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg" crossorigin="anonymous"/>chat blanc</div>\n\tchien`
+    value: `<b>Champ lexical des animaux</b>\n\t<div><img width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" crossorigin="anonymous"/>flamant rose</div>\n\t<div><img width="100px" height="80px" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg" crossorigin="anonymous"/>chat blanc</div>\n\tchien`
+    /*value: `
+      <mindmap width="800" height="600">
+        <nodes>
+          <node id="title"><b>Champ lexical des animaux</b></content>
+          <nodes>
+            <node title="img1">
+              <div><img width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" crossorigin="anonymous"/>flamant rose</div>
+            </node>
+            <node title="img2">
+              <div><img width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" crossorigin="anonymous"/>flamant rose</div>
+            </node>
+          </nodes>
+        </nodes>
+        <edges>
+          <edge from="title" to="test1" />
+          <edge from="test1" to="title" />
+        </edges>
+      </mindmap>
+    `*/
   }
 
   componentDidMount() {

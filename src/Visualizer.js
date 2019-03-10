@@ -31,7 +31,7 @@ class Visualizer extends Component {
 
     const nodes = await Promise.all(map(data.nodes, async node => {
       const domNode = document.getElementById(node.id)
-      const datauri = await domtoimage.toPng(domNode, {
+      const datauri = await domtoimage.toSvg(domNode, {
         width: domNode.offsetWidth,
         height:  domNode.offsetHeight,
       })
@@ -67,7 +67,7 @@ class Visualizer extends Component {
         <div style={{position: 'absolute', top: -999999999, right: 999999999}}>
           {map(data.nodes, node => <div style={{display: "inline-block"}} key={node.id} id={node.id} dangerouslySetInnerHTML={{__html: node.name }} />)}
         </div>
-        <canvas style={{position: 'fixed'}} ref={this.graph} width={`${window.innerWidth}px`} height={`${window.innerHeight}px`}/>
+        <canvas style={{position: 'fixed'}} ref={this.graph} width={`${window.innerWidth/2}px`} height={`${window.innerHeight/2}px`}/>
       </>
     )
   }

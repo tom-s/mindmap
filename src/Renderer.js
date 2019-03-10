@@ -54,51 +54,35 @@ const renderer = function(canvas, params) {
   var nearest = null;
   var dragged = null;
 
-  /* todo
-  jQuery(canvas).mousedown(function(e) {
-    var pos = jQuery(this).offset();
+  
+  canvas.addEventListener('mousedown', e => {
+    var pos = canvas.getBoundingClientRect()
     var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
-    selected = nearest = dragged = layout.nearest(p);
+    const nearest = layout.nearest(p);
+    if(nearest.distance < 1 && nearest.node) {
+      selected = dragged = nearest
+      dragged.point.m = 10000.0
+      nodeSelected(selected.node)
+    } else {
+      selected = dragged = null
+      nodeSelected(null)
+    }
+  })
+  
 
-    if (selected.node !== null) {
-      dragged.point.m = 10000.0;
-
-      if (nodeSelected) {
-        nodeSelected(selected.node);
+  canvas.addEventListener('mousemove', e => {
+    if (dragged && dragged.node) {
+      var pos = canvas.getBoundingClientRect()
+      var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
+      nearest = layout.nearest(p);
+        dragged.point.p.x = p.x;
+        dragged.point.p.y = p.y;
       }
-    }
-
-    renderer.start();
   });
 
-  // Basic double click handler
-  jQuery(canvas).dblclick(function(e) {
-    var pos = jQuery(this).offset();
-    var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
-    selected = layout.nearest(p);
-    node = selected.node;
-    if (node && node.data && node.data.ondoubleclick) {
-      node.data.ondoubleclick();
-    }
-  });
-
-  jQuery(canvas).mousemove(function(e) {
-    var pos = jQuery(this).offset();
-    var p = fromScreen({x: e.pageX - pos.left, y: e.pageY - pos.top});
-    nearest = layout.nearest(p);
-
-    if (dragged !== null && dragged.node !== null) {
-      dragged.point.p.x = p.x;
-      dragged.point.p.y = p.y;
-    }
-
-    renderer.start();
-  });
-
-  jQuery(window).bind('mouseup',function(e) {
-    dragged = null;
-  });
-  */
+  window.document.addEventListener('mouseup', e => {
+    dragged = null
+  })
 
   var getTextWidth = function(node) {
     var text = (node.data.label !== undefined) ? node.data.label : node.id;
@@ -139,6 +123,7 @@ const renderer = function(canvas, params) {
     } else {
       if (this.data.image.src in nodeImages && nodeImages[this.data.image.src].loaded) {
         height = getImageHeight(this);
+        console.log("debug height", height)
       } else {height = 10;}
     }
     return height;
@@ -287,13 +272,15 @@ const renderer = function(canvas, params) {
       ctx.clearRect(s.x - boxWidth/2, s.y - boxHeight/2, boxWidth, boxHeight);
 
       // fill background
+      /*@todo
       if (selected !== null && selected.node !== null && selected.node.id === node.id) {
         ctx.fillStyle = "#FFFFE0";
       } else if (nearest !== null && nearest.node !== null && nearest.node.id === node.id) {
         ctx.fillStyle = "#EEEEEE";
       } else {
         ctx.fillStyle = "#FFFFFF";
-      }
+      }*/
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(s.x - boxWidth/2, s.y - boxHeight/2, boxWidth, boxHeight);
 
       if (node.data.image == undefined) {

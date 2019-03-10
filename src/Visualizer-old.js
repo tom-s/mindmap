@@ -24,7 +24,6 @@ class Visualizer extends Component {
       .graphData(this.props.data)
       .nodeId('id')
       .onNodeClick(node => {
-        console.log("node click", node)
         // Center/zoom on node
         this.myGraph.centerAt(node.x, node.y, 1000)
         this.myGraph.zoom(8, 2000)

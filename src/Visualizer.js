@@ -7,7 +7,7 @@ import Renderer from './Renderer'
 const SPRINGY_CONF = {
   stiffness: 400,
   repulsion: 400,
-  damping: 0.2
+  damping: 0.4
 }
 
 class Visualizer extends Component {
@@ -19,10 +19,6 @@ class Visualizer extends Component {
   }
   componentDidUpdate(prevProps) {
     if(prevProps.data !== this.props.data) {
-      console.log("debug before", {
-        before: prevProps.data,
-        after: this.props.data
-      })
       this.initGraph()
     }
   }
@@ -44,7 +40,6 @@ class Visualizer extends Component {
           image: {
             src: datauri
           },
-          ondoubleclick: () => { console.log("Hello!") },
           metadata: { node }
         }
       )
@@ -61,7 +56,7 @@ class Visualizer extends Component {
       graph: this.myGraph,
       ...SPRINGY_CONF,
       nodeSelected: node => {
-        console.log('Node selected: ' + JSON.stringify(node.data));
+        
       }
     });
   }
@@ -73,7 +68,7 @@ class Visualizer extends Component {
           {map(data.nodes, node => <div style={{display: "inline-block"}} key={node.id} id={node.id} dangerouslySetInnerHTML={{__html: node.name }} />)}
         </div>
         <div  style={{position: 'fixed', top: 100, left: 100, width: '100%', height: '100%'}} >
-          <canvas ref={this.graph} width="800" height="600"/>
+          <canvas ref={this.graph} width="600" height="400"/>
         </div>
       </>
     )

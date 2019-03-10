@@ -1,5 +1,6 @@
 import React, { Component, createRef } from 'react'
-import ForceGraph from 'force-graph'
+import Springy from 'springy'
+import Renderer from './Renderer'
 
 class Visualizer extends Component {
   graph = createRef()
@@ -18,34 +19,41 @@ class Visualizer extends Component {
       .graphData(this.props.data)
   }
   initGraph() {
-    this.myGraph = ForceGraph()(this.graph.current)
-      //.width(800)
-      //.height(800)
-      .graphData(this.props.data)
-      .nodeId('id')
-      .onNodeClick(node => {
-        console.log("node click", node)
-        // Center/zoom on node
-        this.myGraph.centerAt(node.x, node.y, 1000)
-        this.myGraph.zoom(8, 2000)
-      })
-      .nodeCanvasObject((node, ctx, globalScale) => {
-        const label = node.name
-        const fontSize = 12/globalScale
-        ctx.font = `${fontSize * node.size}px Arial`
-        const textWidth = ctx.measureText(label).width
-        const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2) // some padding
-        ctx.fillStyle = 'white'
-        ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions)
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillStyle = node.color || 'red'
-        ctx.fillText(label, node.x, node.y)
-      })
+    console.log("debug data", this.props.data)
+    var graph = new Springy.Graph()
+    var dennis = graph.newNode({
+      label: 'Dennis',
+      ondoubleclick: function() { console.log("Hello!"); }
+    });
+    var michael = graph.newNode({label: 'Michael'});
+    var jessica = graph.newNode({label: 'Jessica'});
+    var timothy = graph.newNode({label: 'Timothy'});
+    var barbara = graph.newNode({label: 'Barbara'});
+    var franklin = graph.newNode({label: 'Franklin'});
+    var monty = graph.newNode({label: 'Monty'});
+    var james = graph.newNode({label: 'James'});
+    var bianca = graph.newNode({label: 'Bianca'});
+    graph.newEdge(dennis, michael, {color: '#00A0B0'});
+    graph.newEdge(michael, dennis, {color: '#6A4A3C'});
+    graph.newEdge(michael, jessica, {color: '#CC333F'});
+    graph.newEdge(jessica, barbara, {color: '#EB6841'});
+    graph.newEdge(michael, timothy, {color: '#EDC951'});
+    graph.newEdge(franklin, monty, {color: '#7DBE3C'});
+    graph.newEdge(dennis, monty, {color: '#000000'});
+    graph.newEdge(monty, james, {color: '#00A0B0'});
+    graph.newEdge(barbara, timothy, {color: '#6A4A3C'});
+    graph.newEdge(dennis, bianca, {color: '#CC333F'});
+    graph.newEdge(bianca, monty, {color: '#EB6841'});
+    Renderer(this.graph.current, {
+      graph: graph,
+      nodeSelected: function(node){
+        console.log('Node selected: ' + JSON.stringify(node.data));
+      }
+    });
   }
   render() {
     return (
-      <div ref={this.graph} style={{position: 'fixed', top: 0}} />
+      <canvas ref={this.graph} style={{position: 'fixed', top: 0}} />
     )
   }
 }

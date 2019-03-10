@@ -70,10 +70,10 @@ class App extends Component {
   render() {
     const { data } = this.state
     return (
-      <div className="App">
+      <>
         <Editor onChange={this.onChange} />
         <Visualizer data={data} />
-      </div>
+      </>
     );
   }
 }

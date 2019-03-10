@@ -197,6 +197,8 @@ const renderer = function(canvas, params) {
       var boxWidth = edge.target.getWidth() + paddingX;
       var boxHeight = edge.target.getHeight() + paddingY;
 
+      console.log("debug boxWidth", boxWidth)
+
       var intersection = intersect_line_box(s1, s2, {x: x2-boxWidth/2.0, y: y2-boxHeight/2.0}, boxWidth, boxHeight);
 
       if (!intersection) {
@@ -317,6 +319,7 @@ const renderer = function(canvas, params) {
           nodeImages[src] = {};
           var img = new Image();
           nodeImages[src].object = img;
+          img.crossOrigin = "Anonymous";
           img.addEventListener("load", function () {
             // HTMLImageElement objects are very finicky about being used before they are loaded, so we set a flag when it is done
             nodeImages[src].loaded = true;

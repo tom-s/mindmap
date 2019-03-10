@@ -1,4 +1,5 @@
 import React, { Component, createRef } from 'react'
+import map from 'lodash/map'
 import Springy from 'springy'
 import domtoimage from 'dom-to-image'
 import Renderer from './Renderer'
@@ -32,17 +33,14 @@ class Visualizer extends Component {
     const { data } = this.props
     this.myGraph = new Springy.Graph()
 
-    const nodes = await Promise.all(data.nodes.map(async node => {
+    const nodes = await Promise.all(map(data.nodes, async node => {
       const domNode = document.getElementById(node.id)
-      console.log("debug height", domNode.offsetWidth, domNode)
       const datauri = await domtoimage.toPng(domNode, {
         width: domNode.offsetWidth,
         height:  domNode.offsetHeight,
       })
-      console.log("debug datauri", datauri)
       return this.myGraph.newNode(
         {
-          //label: node.name,
           image: {
             src: datauri
           },
@@ -51,11 +49,9 @@ class Visualizer extends Component {
         }
       )
     }))
-    
-    console.log("debug nodes", nodes)
+      
 
     data.links.forEach(edge => {
-      console.log("debug edge", edge, nodes)
       const source = nodes.find(node => node.data.metadata.node.id === edge.source)
       const target = nodes.find(node => node.data.metadata.node.id === edge.target)
       this.myGraph.newEdge(source, target, {color: '#00A0B0'});
@@ -74,9 +70,7 @@ class Visualizer extends Component {
     return (
       <>
         <div style={{position: 'absolute', top: -999999999, right: 999999999}}>
-          <div style={{display: "inline-block"}}>
-            {data.nodes.map(node => <div key={node.id} id={node.id} dangerouslySetInnerHTML={{__html: node.name }} />)}
-          </div>
+          {map(data.nodes, node => <div style={{display: "inline-block"}} key={node.id} id={node.id} dangerouslySetInnerHTML={{__html: node.name }} />)}
         </div>
         <div  style={{position: 'fixed', top: 100, left: 100, width: '100%', height: '100%'}} >
           <canvas ref={this.graph} width="800" height="600"/>

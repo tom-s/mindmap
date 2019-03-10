@@ -197,8 +197,6 @@ const renderer = function(canvas, params) {
       var boxWidth = edge.target.getWidth() + paddingX;
       var boxHeight = edge.target.getHeight() + paddingY;
 
-      console.log("debug boxWidth", boxWidth)
-
       var intersection = intersect_line_box(s1, s2, {x: x2-boxWidth/2.0, y: y2-boxHeight/2.0}, boxWidth, boxHeight);
 
       if (!intersection) {

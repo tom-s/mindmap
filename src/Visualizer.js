@@ -67,9 +67,7 @@ class Visualizer extends Component {
         <div style={{position: 'absolute', top: -999999999, right: 999999999}}>
           {map(data.nodes, node => <div style={{display: "inline-block"}} key={node.id} id={node.id} dangerouslySetInnerHTML={{__html: node.name }} />)}
         </div>
-        <div  style={{position: 'fixed', top: 100, left: 100, width: '100%', height: '100%'}} >
-          <canvas ref={this.graph} width="600" height="400"/>
-        </div>
+        <canvas style={{position: 'fixed'}} ref={this.graph} width={`${window.innerWidth}px`} height={`${window.innerHeight}px`}/>
       </>
     )
   }

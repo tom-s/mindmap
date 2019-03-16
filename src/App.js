@@ -6,11 +6,34 @@ import memoize from 'fast-memoize'
 import Editor from './Editor'
 import Visualizer from './Visualizer'
 import get from 'lodash/get'
+import HtmlToReact from 'html-to-react'
 
 const COLORS = [
   '#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
 ]
 
+const tag = (nodeName, handler) => ({
+  shouldProcessNode: (node) => get(node, 'name') === nodeName,
+  processNode: handler
+})
+
+/* Idea:
+1) parse all nodes and edges and pass mindmap ref from parent to children
+2) on mount an unmount each node will call the addNode/removeNode or addEdge/removeEdge method of his parent with a snapshot of itself
+*/
+const processingInstructions = [
+  tag('mindmap', (node, children, key) => <Mindmap key={key} {...node.attribs}>{children}</Mindmap>),
+  tag('node', (node, children, key) => <Node key={key} {...node.attribs}>{children}</Node>),
+  tag('edge', (node, children, key) => <Edge key={key} {...node.attribs}>{children}</Edge>),
+]
+const htmlToReactParser = new HtmlToReact.Parser({
+  recognizeSelfClosing: true
+})
+
+const buildData = value => {
+
+}
+/*
 const buildData = memoize(value => {
   const data = value.split("\n").reduce((memo, val, i) => {
     const cleanVal = trim(val)
@@ -51,7 +74,7 @@ const buildData = memoize(value => {
   }, { nodes: [], links: []})
 
   return newData
-})
+})*/
 
 class App extends Component {
   state = {

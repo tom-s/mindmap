@@ -39,9 +39,8 @@ class Visualizer extends Component {
     ctx.beginPath()
     this.simulation.nodes().forEach(node => this.drawNode(node, ctx))
     ctx.strokeStyle = "red"
-    ctx.stroke();
-
-    ctx.beginPath();
+    ctx.stroke()
+    ctx.beginPath()
     //console.log("debug simulation", this.simulation)
     /*
     this.simulation.links().forEach(link => this.drawLink(link, ctx))
@@ -59,26 +58,17 @@ class Visualizer extends Component {
   }
 
   initGraph() {
-    /*
     const nodes = get(this.props, ['data', 'nodes'])
-    const links = get(this.props, ['data', 'links'])*/
-    var nodes = [
-      {"id": "Alice"},
-      {"id": "Bob"},
-      {"id": "Carol"}
-    ];
-    
-    var links = [
-      {"source": 0, "target": 1}, // Alice → Bob
-      {"source": 1, "target": 2} // Bob → Carol
-    ];
-
+    const links = get(this.props, ['data', 'links'])
+  
     this.simulation = forceSimulation(nodes)
     .force("charge", forceManyBody())
     .force("link", forceLink(links))
     .force("center", forceCenter())
     .stop()
-    console.log("debug simulation", this.simulation)
+
+    console.log("debug links", this.simulation.force('link'))
+
   }
 
   render() {

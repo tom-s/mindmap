@@ -1,51 +1,67 @@
+import get from 'lodash/get'
 import React, { Component, createRef } from 'react'
-import ForceGraph from 'force-graph'
+import {
+  forceSimulation,
+  forceManyBody,
+  forceLink,
+  forceCenter
+} from 'd3-force'
 
 class Visualizer extends Component {
-  graph = createRef()
-  myGraph = null
+  canvasRef = createRef()
+  simulation = null
+  frame = null
 
   componentDidMount() {
     this.initGraph()
+    this.startLoop()
   }
   componentDidUpdate(prevProps) {
     if(prevProps.data !== this.props.data) {
       this.initGraph()
     }
   }
-  updateGraph() {
-    this.myGraph
-      .graphData(this.props.data)
+  startLoop() {
+    this.frame = window.requestAnimationFrame(this.tick)
+  }
+  tick = () => {
+    if(this.simulation) {
+      // perform loop work here
+      this.simulation.tick()
+      this.drawNodes()
+    }
+    // Set up next iteration of the loop
+    this.frame = window.requestAnimationFrame(this.tick)
+  }
+  drawNodes = () => {
+    this.simulation.nodes().forEach(node => {
+      console.log("debug node", node)
+      const ctx = this.canvasRef.current.getContext('2d')
+      ctx.beginPath()
+      ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false)
+      ctx.fillStyle = 'red'
+      ctx.fill()
+    })
   }
   initGraph() {
-    this.myGraph = ForceGraph()(this.graph.current)
-      //.width(800)
-      //.height(800)
-      .graphData(this.props.data)
-      .nodeId('id')
-      .onNodeClick(node => {
-        console.log("node click", node)
-        // Center/zoom on node
-        this.myGraph.centerAt(node.x, node.y, 1000)
-        this.myGraph.zoom(8, 2000)
-      })
-      .nodeCanvasObject((node, ctx, globalScale) => {
-        const label = node.name
-        const fontSize = 12/globalScale
-        ctx.font = `${fontSize * node.size}px Arial`
-        const textWidth = ctx.measureText(label).width
-        const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2) // some padding
-        ctx.fillStyle = 'white'
-        ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions)
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillStyle = node.color || 'red'
-        ctx.fillText(label, node.x, node.y)
-      })
+    console.log("debug data", this.props.data)
+    const nodes = get(this.props, ['data', 'nodes'])
+    const links = get(this.props, ['data', 'links'])
+    this.simulation = forceSimulation(nodes)
+    .force("charge", forceManyBody())
+    .force("link", forceLink(links))
+    .force("center", forceCenter())
+    .stop()
   }
+
   render() {
     return (
-      <div ref={this.graph} style={{position: 'fixed', top: 0}} />
+      <div style={{position: 'fixed', top: 0}} >
+        <canvas ref={this.canvasRef} style={{
+          left: 200,
+          position: 'relative'
+        }}width={800} height={600} />
+      </div>
     )
   }
 }

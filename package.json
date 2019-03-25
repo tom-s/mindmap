@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "codemirror": "^5.43.0",
+    "d3-force": "^2.0.1",
     "fast-memoize": "^2.5.1",
     "force-graph": "^1.14.0",
     "lodash": "^4.17.11",

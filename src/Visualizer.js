@@ -26,7 +26,7 @@ class Visualizer extends Component {
   componentWillUnmount() {
     window.removeEventListener('wheel', this.onWheel)
   }
-  
+
   componentDidUpdate(prevProps) {
     if(prevProps.data !== this.props.data) {
       this.initGraph()
@@ -56,7 +56,7 @@ class Visualizer extends Component {
     this.setState(prevState => ({
       zoomLevel: Math.max(
         0.5,
-        prevState.zoomLevel + (deltaY > 0 ? 0.1 : -0.1)
+        prevState.zoomLevel + (deltaY < 0 ? 0.1 : -0.1)
       )
     }))
   }

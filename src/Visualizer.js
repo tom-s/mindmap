@@ -36,23 +36,26 @@ class Visualizer extends Component {
   draw = () => {
     const ctx = this.canvasRef.current.getContext('2d')
     ctx.clearRect(0, 0, 800, 600)
-    this.simulation.force('link').links().forEach(link => this.drawLink(link, ctx))
-    
-    this.simulation.nodes().forEach(node => this.drawNode(node, ctx))
-  }
-  drawNode = (node, ctx) => {
+
     ctx.strokeStyle = "black"
     ctx.beginPath()
-    ctx.moveTo(node.x + 400, node.y + 300)
-    ctx.arc(node.x + 400, node.y + 300, 3, 0, 2 * Math.PI)
+    this.simulation.force('link').links().forEach(link => this.drawLink(link, ctx))
     ctx.stroke()
-  }
-  drawLink = (link, ctx) => {
+    
     ctx.strokeStyle = "green"
     ctx.beginPath()
+    this.simulation.nodes().forEach(node => this.drawNode(node, ctx))
+    ctx.stroke()
+
+  }
+  drawNode = (node, ctx) => {
+    ctx.moveTo(node.x + 400, node.y + 300)
+    ctx.arc(node.x + 400, node.y + 300, 3, 0, 2 * Math.PI)
+  }
+  drawLink = (link, ctx) => {
+   
     ctx.moveTo(link.source.x + 400, link.source.y + 300)
     ctx.lineTo(link.target.x + 400, link.target.y + 300)
-    ctx.stroke()
   }
 
   initGraph() {

@@ -36,25 +36,23 @@ class Visualizer extends Component {
   draw = () => {
     const ctx = this.canvasRef.current.getContext('2d')
     ctx.clearRect(0, 0, 800, 600)
-    ctx.beginPath()
+    this.simulation.force('link').links().forEach(link => this.drawLink(link, ctx))
+    
     this.simulation.nodes().forEach(node => this.drawNode(node, ctx))
-    ctx.strokeStyle = "red"
-    ctx.stroke()
-    ctx.beginPath()
-    //console.log("debug simulation", this.simulation)
-    /*
-    this.simulation.links().forEach(link => this.drawLink(link, ctx))
-    ctx.fill()
-    ctx.strokeStyle = "#fff"
-    ctx.stroke()*/
   }
   drawNode = (node, ctx) => {
+    ctx.strokeStyle = "black"
+    ctx.beginPath()
     ctx.moveTo(node.x + 400, node.y + 300)
     ctx.arc(node.x + 400, node.y + 300, 3, 0, 2 * Math.PI)
+    ctx.stroke()
   }
   drawLink = (link, ctx) => {
-    ctx.moveTo(link.source.x + 400, link.source.y + 300);
-    ctx.lineTo(link.target.x + 400, link.target.y + 300);
+    ctx.strokeStyle = "green"
+    ctx.beginPath()
+    ctx.moveTo(link.source.x + 400, link.source.y + 300)
+    ctx.lineTo(link.target.x + 400, link.target.y + 300)
+    ctx.stroke()
   }
 
   initGraph() {
@@ -66,9 +64,6 @@ class Visualizer extends Component {
     .force("link", forceLink(links))
     .force("center", forceCenter())
     .stop()
-
-    console.log("debug links", this.simulation.force('link'))
-
   }
 
   render() {

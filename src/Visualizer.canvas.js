@@ -11,22 +11,11 @@ class Visualizer extends Component {
   canvasRef = createRef()
   simulation = null
   frame = null
-  state = {
-    links: [],
-    nodes: [],
-    zoomLevel: 1
-  }
 
   componentDidMount() {
     this.initGraph()
     this.startLoop()
-    window.addEventListener('wheel', this.onWheel)
   }
-
-  componentWillUnmount() {
-    window.removeEventListener('wheel', this.onWheel)
-  }
-  
   componentDidUpdate(prevProps) {
     if(prevProps.data !== this.props.data) {
       this.initGraph()
@@ -39,26 +28,34 @@ class Visualizer extends Component {
     if(this.simulation) {
       // perform loop work here
       this.simulation.tick()
-      this.setState({
-        links: this.simulation.force('link').links(),
-        nodes: this.simulation.nodes()
-      })
+      this.draw()
     }
     // Set up next iteration of the loop
     this.frame = window.requestAnimationFrame(this.tick)
   }
+  draw = () => {
+    const ctx = this.canvasRef.current.getContext('2d')
+    ctx.clearRect(0, 0, 800, 600)
 
-  onWheel = e => {
-    this.setZoomLevel(e.deltaY)
+    ctx.strokeStyle = "black"
+    ctx.beginPath()
+    this.simulation.force('link').links().forEach(link => this.drawLink(link, ctx))
+    ctx.stroke()
+    
+    ctx.strokeStyle = "green"
+    ctx.beginPath()
+    this.simulation.nodes().forEach(node => this.drawNode(node, ctx))
+    ctx.stroke()
+
   }
-
-  setZoomLevel = deltaY => {
-    this.setState(prevState => ({
-      zoomLevel: Math.max(
-        0.5,
-        prevState.zoomLevel + (deltaY > 0 ? 0.1 : -0.1)
-      )
-    }))
+  drawNode = (node, ctx) => {
+    ctx.moveTo(node.x + 400, node.y + 300)
+    ctx.arc(node.x + 400, node.y + 300, 3, 0, 2 * Math.PI)
+  }
+  drawLink = (link, ctx) => {
+   
+    ctx.moveTo(link.source.x + 400, link.source.y + 300)
+    ctx.lineTo(link.target.x + 400, link.target.y + 300)
   }
 
   initGraph() {
@@ -73,14 +70,12 @@ class Visualizer extends Component {
   }
 
   render() {
-    const { zoomLevel, links, nodes } = this.state
     return (
-      <div style={{position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', transform: `scale(${zoomLevel})`}} >
-        {nodes.map(node => (
-          <div style={{position: 'absolute', top:'50%', 'left': '50%', transform: `translate3d(${node.x}px, ${node.y}px, 0)`}}>
-            <div dangerouslySetInnerHTML={{__html: node.name}} />
-          </div>
-        ))}
+      <div style={{position: 'fixed', top: 0}} >
+        <canvas ref={this.canvasRef} style={{
+          left: 200,
+          position: 'relative'
+        }} width={800} height={600} />
       </div>
     )
   }

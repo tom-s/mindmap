@@ -34,7 +34,8 @@ const buildData = memoize(value => {
         name: node.name,
         val: node.val,
         color: COLORS[node.level],
-        size: node.size
+        size: node.size,
+        radius: 30
       }
     ]
     const newLinks = parentNode

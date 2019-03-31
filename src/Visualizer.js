@@ -4,7 +4,8 @@ import {
   forceSimulation,
   forceManyBody,
   forceLink,
-  forceCenter
+  forceCenter,
+  forceCollide
 } from 'd3-force'
 
 class Visualizer extends Component {
@@ -65,10 +66,15 @@ class Visualizer extends Component {
     const nodes = get(this.props, ['data', 'nodes'])
     const links = get(this.props, ['data', 'links'])
   
+    const width = 800
+    const height = 400
     this.simulation = forceSimulation(nodes)
-    .force("charge", forceManyBody())
+    .velocityDecay(0.8)
     .force("link", forceLink(links))
-    .force("center", forceCenter())
+    .force("charge", forceManyBody())
+    .force("charge", forceManyBody().strength(-100))
+    .force("collide",forceCollide(d => 100))
+    .force("center", forceCenter())   
     .stop()
   }
 

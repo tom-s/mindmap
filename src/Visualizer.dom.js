@@ -72,22 +72,18 @@ class Visualizer extends Component {
     const nodes = get(this.props, ['data', 'nodes'])
     const links = get(this.props, ['data', 'links'])
   
-    const attractForce = forceManyBody().strength(0.5)
+    const attractForce = forceManyBody()//.strength(0.5)
     const collisionForce = forceCollide(d => {
       const node = this.nodesRefs[d.id]
       const w = node.offsetWidth
       const h = node.offsetHeight
       const radius = Math.max(w, h) / 2
-      console.log("d", {
-        d,
-        radius
-      })
       return Math.max(
-        radius,
+        radius * 1.5,
         50 //insures a minimum distance
       )
     }).strength(0.01).iterations(1)
-    const linkForce = forceLink(links)
+    const linkForce = forceLink(links).strength(1)
     const centerForce = forceCenter(width / 2, height / 2)
 
     this.simulation = forceSimulation(nodes)

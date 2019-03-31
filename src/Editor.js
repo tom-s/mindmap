@@ -5,7 +5,8 @@ class Editor extends Component {
   textarea = createRef()
   editor = undefined
   state = {
-    value: `<b>Champ lexical des animaux</b>\n\t<div><img width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" crossorigin="anonymous"/>flamant rose</div>\n\t<div><img width="100px" height="80px" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg" crossorigin="anonymous"/>chat blanc</div>\n\tchien`
+    //value: `<b>Champ lexical des animaux</b>\n\t<div><img width="100px" height="100px" src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg" crossorigin="anonymous"/>flamant rose</div>\n\t<div><img width="100px" height="80px" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/June_odd-eyed-cat.jpg" crossorigin="anonymous"/>chat blanc</div>\n\tchien`
+    value: `climate change\n\tenergy\n\toceans`
   }
 
   componentDidMount() {

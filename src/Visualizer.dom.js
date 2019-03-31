@@ -10,6 +10,8 @@ import {
   forceCollide,
   forceRadial
 } from 'd3-force'
+import { drag } from 'd3-drag'
+import { selectAll } from 'd3-selection'
 
 class Visualizer extends Component {
   visualizerRef = createRef()
@@ -26,6 +28,12 @@ class Visualizer extends Component {
     this.initGraph()
     this.startLoop()
     window.addEventListener('wheel', this.onWheel)
+
+    //@todo: that doesn't work with our simulation, we'll need to do it by hand !
+    console.log("debug hum", selectAll(".node"))
+    selectAll(".node").call(drag().on("start", (e) => {
+      console.log("debug drag", e)
+    }))
   }
 
   componentWillUnmount() {
@@ -71,7 +79,7 @@ class Visualizer extends Component {
     const height = window.innerHeight
     const nodes = get(this.props, ['data', 'nodes'])
     const links = get(this.props, ['data', 'links'])
-  
+
     const attractForce = forceManyBody()//.strength(0.5)
     const collisionForce = forceCollide(d => {
       const node = this.nodesRefs[d.id]
@@ -95,6 +103,8 @@ class Visualizer extends Component {
       .stop()
     //.alphaDecay(0.04)
     //.velocityDecay(0.4)
+
+   
   }
 
   getLinkStyle = ({ source, target }) => {
@@ -143,8 +153,8 @@ class Visualizer extends Component {
               <div style={style} />
         )})}
         {nodes.map(node => (
-          <div key={node.id} style={{position: 'absolute', top:'0%', 'left': '0%', transform: `translate3d(${Math.round(node.x)}px, ${Math.round(node.y)}px, 0)`}}>
-            <div style={{backgroundColor: 'white', border: '1px solid red'}} dangerouslySetInnerHTML={{__html: node.name}} />
+          <div className="node" key={node.id} style={{position: 'absolute', top:'0%', 'left': '0%', transform: `translate3d(${Math.round(node.x)}px, ${Math.round(node.y)}px, 0)`}}>
+            <div style={{backgroundColor: 'white'}} dangerouslySetInnerHTML={{__html: node.name}} />
           </div>
         ))}
         

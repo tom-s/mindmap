@@ -4,6 +4,8 @@ import {
   forceSimulation,
   forceManyBody,
   forceLink,
+  forceX,
+  forceY,
   forceCenter,
   forceCollide,
   forceRadial
@@ -65,26 +67,38 @@ class Visualizer extends Component {
   }
 
   initGraph() {
+    const width = window.innerWidth
+    const height = window.innerHeight
     const nodes = get(this.props, ['data', 'nodes'])
     const links = get(this.props, ['data', 'links'])
   
-    this.simulation = forceSimulation(nodes)
-    //.velocityDecay(0.8)
-    .force("charge", forceManyBody().strength(-5))
-    .force("link", forceLink(links).distance(0))
-   
-    .force("collide",forceCollide(d => {
+    const attractForce = forceManyBody().strength(0.5)
+    const collisionForce = forceCollide(d => {
       const node = this.nodesRefs[d.id]
       const w = node.offsetWidth
       const h = node.offsetHeight
+      const radius = Math.max(w, h) / 2
+      console.log("d", {
+        d,
+        radius
+      })
       return Math.max(
-        Math.max(w, h) / 2,
-        0 //insures a minimum distance
+        radius,
+        50 //insures a minimum distance
       )
-    }))
-    //.force("r", forceRadial(d => 600))
-    .force("center", forceCenter(window.innerWidth / 2, window.innerHeight / 2))
-    .stop()
+    }).strength(0.01).iterations(1)
+    const linkForce = forceLink(links)
+    const centerForce = forceCenter(width / 2, height / 2)
+
+    this.simulation = forceSimulation(nodes)
+      .force('attract', attractForce)
+      .force('collision', collisionForce)
+      .force('link', linkForce)
+      .force('center', centerForce)
+      .tick(1000)
+      .stop()
+    //.alphaDecay(0.04)
+    //.velocityDecay(0.4)
   }
 
   getLinkStyle = ({ source, target }) => {
@@ -107,11 +121,11 @@ class Visualizer extends Component {
 
     var angle = Math.PI - Math.atan2(-b, a);
     return {
-      'border': '1px solid black',
       'top': Math.round(y),
       'left': Math.round(x),
       'width': Math.round(length),
-      'height': 0,
+      'height': 1,
+      'backgroundColor': 'black',
       'position': 'absolute',
       'transform': `rotate(${angle}rad)`
     }
@@ -133,7 +147,7 @@ class Visualizer extends Component {
               <div style={style} />
         )})}
         {nodes.map(node => (
-          <div key={node.id} style={{position: 'absolute', top:'0%', 'left': '0%', transform: `translate3d(${node.x}px, ${node.y}px, 0)`}}>
+          <div key={node.id} style={{position: 'absolute', top:'0%', 'left': '0%', transform: `translate3d(${Math.round(node.x)}px, ${Math.round(node.y)}px, 0)`}}>
             <div style={{backgroundColor: 'white', border: '1px solid red'}} dangerouslySetInnerHTML={{__html: node.name}} />
           </div>
         ))}

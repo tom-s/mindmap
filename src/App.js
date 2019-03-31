@@ -4,7 +4,7 @@ import debounce from 'lodash/debounce'
 import './Editor.css'
 import memoize from 'fast-memoize'
 import Editor from './Editor'
-import Visualizer from './Visualizer'
+import Visualizer from './Visualizer.dom'
 import get from 'lodash/get'
 import size from 'lodash/size'
 

@@ -5,11 +5,12 @@ import {
   forceManyBody,
   forceLink,
   forceCenter,
-  forceCollide
+  forceCollide,
+  forceRadial
 } from 'd3-force'
 
 class Visualizer extends Component {
-  canvasRef = createRef()
+  visualizerRef = createRef()
   nodesRefs = {}
   simulation = null
   frame = null
@@ -68,16 +69,20 @@ class Visualizer extends Component {
     const links = get(this.props, ['data', 'links'])
   
     this.simulation = forceSimulation(nodes)
-    .velocityDecay(0.8)
-    .force("link", forceLink(links))
-    .force("charge", forceManyBody())
-    .force("charge", forceManyBody().strength(-100))
+    //.velocityDecay(0.8)
+    .force("charge", forceManyBody().strength(-5))
+    .force("link", forceLink(links).distance(0))
+   
     .force("collide",forceCollide(d => {
       const node = this.nodesRefs[d.id]
       const w = node.offsetWidth
       const h = node.offsetHeight
-      return Math.max(w, h) / 2
+      return Math.max(
+        Math.max(w, h) / 2,
+        0 //insures a minimum distance
+      )
     }))
+    //.force("r", forceRadial(d => 600))
     .force("center", forceCenter(window.innerWidth / 2, window.innerHeight / 2))
     .stop()
   }
@@ -103,9 +108,9 @@ class Visualizer extends Component {
     var angle = Math.PI - Math.atan2(-b, a);
     return {
       'border': '1px solid black',
-      'top': y,
-      'left': x,
-      'width': length,
+      'top': Math.round(y),
+      'left': Math.round(x),
+      'width': Math.round(length),
       'height': 0,
       'position': 'absolute',
       'transform': `rotate(${angle}rad)`
@@ -117,7 +122,7 @@ class Visualizer extends Component {
 
     const { zoomLevel, links, nodes } = this.state
     return (
-      <>
+      <div ref={this.visualizerRef}>
       <div style={{position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', transform: `scale(${zoomLevel})`}} >
       {links.map(link => {
           const style = this.getLinkStyle({
@@ -129,7 +134,7 @@ class Visualizer extends Component {
         )})}
         {nodes.map(node => (
           <div key={node.id} style={{position: 'absolute', top:'0%', 'left': '0%', transform: `translate3d(${node.x}px, ${node.y}px, 0)`}}>
-            <div dangerouslySetInnerHTML={{__html: node.name}} />
+            <div style={{backgroundColor: 'white', border: '1px solid red'}} dangerouslySetInnerHTML={{__html: node.name}} />
           </div>
         ))}
         
@@ -140,7 +145,7 @@ class Visualizer extends Component {
             <div style={{ display: 'inline-block' }} ref={ref => this.nodesRefs[node.id] = ref} key={`ori_${node.id}`} dangerouslySetInnerHTML={{__html: node.name}} />
           ))}
         </div>
-      </>
+      </div>
     )
   }
 }

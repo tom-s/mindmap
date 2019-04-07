@@ -13,6 +13,8 @@ import {
 import { drag } from 'd3-drag'
 import { selectAll } from 'd3-selection'
 
+const DRAG_IMG = new Image()
+
 class Visualizer extends Component {
   visualizerRef = createRef()
   nodesRefs = {}
@@ -21,19 +23,14 @@ class Visualizer extends Component {
   state = {
     links: [],
     nodes: [],
-    zoomLevel: 1
+    zoomLevel: 1,
+    isDragging: false
   }
 
   componentDidMount() {
     this.initGraph()
     this.startLoop()
     window.addEventListener('wheel', this.onWheel)
-
-    //@todo: that doesn't work with our simulation, we'll need to do it by hand !
-    console.log("debug hum", selectAll(".node"))
-    selectAll(".node").call(drag().on("start", (e) => {
-      console.log("debug drag", e)
-    }))
   }
 
   componentWillUnmount() {
@@ -80,31 +77,36 @@ class Visualizer extends Component {
     const nodes = get(this.props, ['data', 'nodes'])
     const links = get(this.props, ['data', 'links'])
 
-    const attractForce = forceManyBody()//.strength(0.5)
-    const collisionForce = forceCollide(d => {
+    const chargeForce = forceManyBody().strength(-30)//.distanceMin(-1).distanceMax(2000)
+    const collideForce = forceCollide(d => {
       const node = this.nodesRefs[d.id]
       const w = node.offsetWidth
       const h = node.offsetHeight
       const radius = Math.max(w, h) / 2
-      return Math.max(
-        radius * 1.5,
-        50 //insures a minimum distance
-      )
-    }).strength(0.01).iterations(1)
-    const linkForce = forceLink(links).strength(1)
+      return radius
+    }).strength(0.7).iterations(1)
+    const linkForce = forceLink(links).strength(2)
     const centerForce = forceCenter(width / 2, height / 2)
 
     this.simulation = forceSimulation(nodes)
-      .force('attract', attractForce)
-      .force('collision', collisionForce)
       .force('link', linkForce)
+      .force('charge', chargeForce)
+      .force('collide', collideForce)
       .force('center', centerForce)
-      .tick(1000)
-      .stop()
+      //.tick(2000)
     //.alphaDecay(0.04)
     //.velocityDecay(0.4)
+  }
 
-   
+  getNodeStyle = ({ node }) => {
+    const { isDragging } = this.state
+    return{
+      position: 'absolute', 
+      top:0, 
+      left:0,
+      transition: isDragging ? 'none ' : 'transform 0.1s linear',
+      transform: `translate3d(${Math.round(node.x)}px, ${Math.round(node.y)}px, 0)`
+    }
   }
 
   getLinkStyle = ({ source, target }) => {
@@ -137,6 +139,40 @@ class Visualizer extends Component {
     }
   }
 
+  onDragStartNode = e => {
+    e.dataTransfer.setDragImage(DRAG_IMG, 0, 0)
+    this.setState({
+      isDragging: true
+    })
+  }
+
+  onDragEndNode = e => {
+    this.setState({
+      isDragging: false
+    })
+  }
+
+  onDragNode = (e, node) => {
+    this.updateNodePosition({
+      node,
+      x: e.x,
+      y: e.y,
+      clientX: e.clientX,
+      clientY: e.clientY
+    })
+  }
+
+  updateNodePosition({
+    node,
+    clientX,
+    clientY
+  }) {
+    if(clientX && clientY) {
+      node.fx = clientX
+      node.fy = clientY
+    }
+  }
+
   render() {
     const originalNodes = get(this.props, ['data', 'nodes'])
 
@@ -153,7 +189,9 @@ class Visualizer extends Component {
               <div style={style} />
         )})}
         {nodes.map(node => (
-          <div className="node" key={node.id} style={{position: 'absolute', top:'0%', 'left': '0%', transform: `translate3d(${Math.round(node.x)}px, ${Math.round(node.y)}px, 0)`}}>
+          <div draggable={true} onDragStart={this.onDragStartNode} onDrag={e => this.onDragNode(e, node)} className="node" key={node.id} style={this.getNodeStyle({
+            node
+          })}>
             <div style={{backgroundColor: 'white'}} dangerouslySetInnerHTML={{__html: node.name}} />
           </div>
         ))}

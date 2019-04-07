@@ -133,7 +133,7 @@ class Visualizer extends Component {
       'left': Math.round(x),
       'width': Math.round(length),
       'height': 1,
-      'backgroundColor': 'black',
+      'backgroundColor': 'lightgrey',
       'position': 'absolute',
       'transform': `rotate(${angle}rad)`
     }

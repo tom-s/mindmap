@@ -8,10 +8,8 @@ import Nodes from './Nodes'
 import OutsideViewportNodes from './OutsideViewportNodes'
 import styled from 'styled-components'
 
-const Container = styled.div`
-`
-
 class Visualizer extends Component {
+  containerRef = React.createRef()
   nodesRefs = {}
   state = {
     links: [],
@@ -20,14 +18,28 @@ class Visualizer extends Component {
   }
 
   componentDidMount() {
-    createSimulation(this.props.data, this.findNode, this.onTick)
+    this.simulation()
     addZoomListener(this.onZoom)
   }
 
   componentDidUpdate(prevProps) {
     if(prevProps.data !== this.props.data) {
-      createSimulation(this.props.data, this.findNode, this.onTick)
+      this.simulation()
     }
+  }
+
+  simulation = () => {
+    const { data } = this.props
+    const { top, left, width, height } = this.containerRef.current.getBoundingClientRect()
+    createSimulation({
+      data,
+      findNode:  this.findNode,
+      onTick: this.onTick,
+      center: {
+        x: width / 2,
+        y: top + (height / 2)
+      }
+    })
   }
 
   componentWillUnmount() {
@@ -59,13 +71,11 @@ class Visualizer extends Component {
     const { zoomLevel, links, nodes } = this.state
     return (
       <>
-        <Container>
-          {/* todo: manage to center this content */}
-          <div style={{position: 'relative', width: 400, height: 400, transform: `scale(${zoomLevel})`}} >
-            <Links links={links} nodesRefs={this.nodesRefs} />
-            <Nodes nodes={nodes} />
-          </div>
-        </Container>
+        {/* todo: manage to center this content */}
+        <div ref={this.containerRef} style={{position: 'relative', width: '100%', height: '100%', transform: `scale(${zoomLevel})`}} >
+          <Links links={links} nodesRefs={this.nodesRefs} />
+          <Nodes nodes={nodes} />
+        </div>
         <OutsideViewportNodes nodes={originalNodes} onNodeRef={this.onNodeRef} />
       </>
     )

@@ -17,13 +17,14 @@ const buildStyle = ({ source, target, nodesRefs }) => {
 
   const angle = Math.PI - Math.atan2(-b, a)
   return {
-    'top': Math.round(y),
-    'left': Math.round(x),
-    'width': Math.round(length),
-    'height': 1,
-    'backgroundColor': 'lightgrey',
-    'position': 'absolute',
-    'transform': `rotate(${angle}rad)`
+    top: Math.round(y),
+    left: Math.round(x),
+    width: Math.round(length),
+    height: 1,
+    backgroundColor: 'lightgrey',
+    position: 'absolute',
+    //transition: 'transform 0.1s linear',
+    transform: `rotate(${angle}rad)`
   }
 }
 

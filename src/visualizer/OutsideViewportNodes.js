@@ -12,7 +12,7 @@ class Node extends React.Component {
   render () {
     const { node } = this.props
     return (
-      <NodeContainer ref={this.onNodeRef} key={node.id} dangerouslySetInnerHTML={{__html: node.name}} />
+      <NodeContainer ref={this.onNodeRef} key={node.id} dangerouslySetInnerHTML={{__html: node.html}} />
     )
   }
 }
@@ -27,7 +27,7 @@ const NodesContainer = styled.div`
 /*  Render nodes outside the viewport so that we can retrieve their size */
 const OutsideViewportNodes = ({ nodes, onNodeRef}) =>
   <NodesContainer>
-    {nodes.map(node => <Node node={node} onNodeRef={onNodeRef} />)}
+    {nodes.map(node => <Node key={node.id} node={node} onNodeRef={onNodeRef} />)}
   </NodesContainer>
 
 export default OutsideViewportNodes

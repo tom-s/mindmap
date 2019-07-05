@@ -8,7 +8,7 @@ const Container = styled.div`
   height: 100%;
   top: 0;
   left: 0;
-  border: 1px solid grey;
+  border-right: 1px solid grey;
 
 
   .CodeMirror {

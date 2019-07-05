@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { setAlphaTarget } from '../utils/simulation/index'
 const DRAG_IMG = new Image()
 
 const buildStyle = ({ node }) => ({
@@ -15,30 +15,39 @@ class Node extends React.Component {
     e.dataTransfer.setDragImage(DRAG_IMG, 0, 0)
     e.dataTransfer.effectAllowed = 'none'
     e.dataTransfer.dropEffect = 'none'
+    setAlphaTarget(0.3)
+  }
+
+  onDragEndNode = (e, node) => {
+    this.updateNodePosition({
+      node,
+      fx: null,
+      fy: null
+    })
+    setAlphaTarget(0)
   }
 
   onDragNode = (e, node) => {
+    const { top, left } = this.props
+    const fx = e.clientX - left
+    const fy =  e.clientY - top
     this.updateNodePosition({
       node,
-      x: e.x,
-      y: e.y,
-      clientX: e.clientX,
-      clientY: e.clientY
+      fx,
+      fy
     })
   }
 
+
   updateNodePosition({
     node,
-    clientX,
-    clientY
+    fx,
+    fy
   }) {
-    const { top, left } = this.props
-    if(clientX && clientY) {
-      // This is a bit hackish to update props directly
-      // But d3-force.simulation.nodes() is too costly to run it every time, better mutate them directly
-      node.fx = clientX - left
-      node.fy = clientY - top
-    }
+    // This is a bit hackish to update props directly
+    // But d3-force.simulation.nodes() is too costly to run it every time, better mutate them directly
+    node.fx = fx
+    node.fy = fy
   }
 
 
@@ -47,7 +56,7 @@ class Node extends React.Component {
     return (
       <div draggable={true} key={node.id} style={buildStyle({
         node
-      })} onDragStart={this.onDragStartNode} onDrag={e => this.onDragNode(e, node)} >
+      })} onDragStart={this.onDragStartNode} onDragEnd={e => this.onDragEndNode(e, node)} onDrag={e => this.onDragNode(e, node)} >
         <div dangerouslySetInnerHTML={{__html: node.html}} />
       </div>
     )

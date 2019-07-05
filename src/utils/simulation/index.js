@@ -40,6 +40,14 @@ const tickSimulation = () => {
   })
 }
 
+export const setAlphaTarget = alpha => {
+  simulation && simulation.alphaTarget(alpha)
+}
+
+export const test2 = () => {
+  simulation && simulation.alphaTarget(0);
+}
+
 const getSimulationLinks = () => simulation
   ? simulation.force('link').links()
   : []
@@ -47,3 +55,4 @@ const getSimulationLinks = () => simulation
 const getSimulationNodes = () => simulation
   ? simulation.nodes()
   : []
+
